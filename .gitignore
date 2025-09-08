@@ -1,0 +1,8 @@
+# Pasta de compilação do CMake
+build/
+
+# Ficheiros do VS Code
+.vscode/
+
+# Ficheiros de sistema
+*.DS_Store

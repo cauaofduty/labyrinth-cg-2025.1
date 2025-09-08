@@ -1,0 +1,75 @@
+===============================================
+COMO COMPILAR E EXECUTAR O PROJETO LABIRINTO 3D
+===============================================
+
+Este guia explica os passos necessários para compilar e executar o projeto em sistemas operativos Linux baseados em Debian (como Ubuntu, Linux Mint, etc.).
+
+---------------------------------
+PASSO 1: INSTALAR AS DEPENDÊNCIAS
+---------------------------------
+
+Antes de tudo, é necessário garantir que todas as ferramentas e bibliotecas externas estão instaladas no sistema.
+
+Abra um terminal (Ctrl+Alt+T) e execute o seguinte comando. Ele irá atualizar a sua lista de pacotes e instalar tudo o que é preciso de uma só vez.
+
+sudo apt-get update && sudo apt-get install build-essential cmake libglfw3-dev libglm-dev libfreetype-dev
+
+Detalhes do que está a ser instalado:
+- build-essential: Instala o compilador de C++ (g++) e outras ferramentas essenciais.
+- cmake: A ferramenta que automatiza o processo de compilação.
+- libglfw3-dev: Biblioteca para a criação de janelas e gestão de inputs (teclado, rato).
+- libglm-dev: Biblioteca para matemática de vetores e matrizes.
+- libfreetype-dev: Biblioteca para carregar e renderizar fontes de texto.
+
+As outras bibliotecas (GLAD, tinyobjloader) já estão incluídas no projeto e não necessitam de instalação separada.
+
+---------------------------
+PASSO 2: COMPILAR O PROJETO
+---------------------------
+
+O projeto utiliza o CMake para gerar os ficheiros de compilação de uma forma organizada, separando os ficheiros compilados do código-fonte.
+
+1.  Abra um terminal e navegue até à pasta principal (raiz) deste projeto. É a pasta que contém este ficheiro e o `CMakeLists.txt`.
+
+    Exemplo:
+    cd /caminho/para/o/seu/PROJETO_CG/
+
+2.  Crie um diretório de compilação ("build"), entre nele e execute o CMake.
+
+    (Pode copiar e colar este bloco de comandos inteiro no seu terminal)
+    
+    # Apaga a pasta 'build' antiga para garantir uma compilação limpa
+    rm -rf build
+
+    # Cria uma nova pasta 'build' e entra nela
+    mkdir build
+    cd build
+
+    # Executa o CMake para preparar os ficheiros de compilação
+    cmake ..
+
+3.  Agora que o CMake preparou tudo, compile o projeto com o comando `make`.
+
+    make
+
+    Este processo pode demorar um pouco na primeira vez. Se tudo correr bem, será criado um ficheiro executável chamado "PROJETO_CG" dentro da pasta `build`.
+
+-------------------------
+PASSO 3: EXECUTAR O JOGO
+-------------------------
+
+Após a compilação ser concluída com sucesso, certifique-se de que ainda está no diretório `build`.
+
+Para iniciar o jogo, execute o seguinte comando:
+
+./PROJETO_CG
+
+A janela do labirinto deverá abrir, e o jogo estará pronto a ser jogado.
+
+--------------------
+CONTROLES
+--------------------
+- W, A, S, D: Mover a câmara.
+- Mouse: Olhar ao redor.
+- Clique Esquerdo: Interagir com o baú ou portal mais próximo.
+- ESC: Fechar o programa.
