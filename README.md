@@ -8,7 +8,7 @@ Este projeto é um jogo de exploração de um labirinto 3D desenvolvido em C++ c
 * **Colisão com o Cenário:** Um sistema de colisão baseado em caixas delimitadoras (AABB) impede que o jogador atravesse paredes e o chão.
 * **Objetos Interativos:** Os baús podem ser abertos através da proximidade e de um clique, ativando uma animação de "levitação" da tampa.
 * **Sistema de Jogo:** O objetivo é abrir 3 baús para ativar um portal. Ao interagir com o portal, o jogo exibe mensagens de estado.
-* **Interface de Utilizador (UI):** O ecrã mostra um contador de baús abertos e mensagens dinâmicas, como o objetivo atual ("Procure o portal!") e a mensagem de vitória ("FIM").
+* **Interface de Utilizador (UI):** O display mostra um contador de baús abertos e mensagens dinâmicas, como o objetivo atual ("Procure o portal!") e a mensagem de vitória ("FIM").
 
 ## Tecnologias Utilizadas
 
