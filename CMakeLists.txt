@@ -10,9 +10,10 @@ endif()
 
 cmake_policy(SET CMP0072 NEW)
 
-find_package(glfw3 REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(Freetype REQUIRED)
+find_package(Stb REQUIRED)
 
 # Adiciona a pasta src aos diretórios de include para que possamos fazer #include "Shader.h"
 include_directories(include src)
@@ -28,6 +29,7 @@ add_executable(PROJETO_CG
 
 # "Linka" (conecta) seu programa com as bibliotecas
 target_link_libraries(PROJETO_CG PRIVATE glfw ${OPENGL_LIBRARIES} Freetype::Freetype)
+target_include_directories(PROJETO_CG PRIVATE ${Stb_INCLUDE_DIR})
 
 # Copia as pastas de recursos para o diretório de build
 file(COPY shaders models fonts DESTINATION ${CMAKE_BINARY_DIR})

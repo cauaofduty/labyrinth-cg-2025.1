@@ -2,74 +2,205 @@
 COMO COMPILAR E EXECUTAR O PROJETO LABIRINTO 3D
 ===============================================
 
-Este guia explica os passos necessários para compilar e executar o projeto em sistemas operativos Linux baseados em Debian (como Ubuntu, Linux Mint, etc.).
+Este guia explica os passos necessários para compilar e executar o projeto em diferentes sistemas operativos.
+
+===============================================
+WINDOWS (Recomendado - Usando vcpkg)
+===============================================
 
 ---------------------------------
-PASSO 1: INSTALAR AS DEPENDÊNCIAS
+PASSO 1: INSTALAR AS FERRAMENTAS NECESSÁRIAS
 ---------------------------------
 
-Antes de tudo, é necessário garantir que todas as ferramentas e bibliotecas externas estão instaladas no sistema.
+1. INSTALAR VISUAL STUDIO 2022 (Community Edition)
+   - Baixe em: https://visualstudio.microsoft.com/vs/community/
+   - Durante a instalação, selecione "Desktop development with C++"
+   - Inclui: MSVC compiler, CMake, Windows SDK
 
-Abra um terminal (Ctrl+Alt+T) e execute o seguinte comando. Ele irá atualizar a sua lista de pacotes e instalar tudo o que é preciso de uma só vez.
+2. INSTALAR GIT
+   - Baixe em: https://git-scm.com/download/win
+   - Instale com as configurações padrão
 
-sudo apt-get update && sudo apt-get install build-essential cmake libglfw3-dev libglm-dev libfreetype-dev
+3. INSTALAR VCPKG (Gerenciador de Pacotes C++)
+   - Abra o PowerShell como Administrador
+   - Execute os comandos:
+   
+   cd C:\
+   git clone https://github.com/Microsoft/vcpkg.git
+   cd vcpkg
+   .\bootstrap-vcpkg.bat
+   .\vcpkg integrate install
 
-Detalhes do que está a ser instalado:
-- build-essential: Instala o compilador de C++ (g++) e outras ferramentas essenciais.
-- cmake: A ferramenta que automatiza o processo de compilação.
-- libglfw3-dev: Biblioteca para a criação de janelas e gestão de inputs (teclado, rato).
-- libglm-dev: Biblioteca para matemática de vetores e matrizes.
-- libfreetype-dev: Biblioteca para carregar e renderizar fontes de texto.
+4. INSTALAR AS BIBLIOTECAS DO PROJETO
+   - No PowerShell (como Administrador), execute:
+   
+   .\vcpkg install glfw3:x64-windows
+   .\vcpkg install glm:x64-windows
+   .\vcpkg install freetype:x64-windows
+   .\vcpkg install stb:x64-windows
 
-As outras bibliotecas (GLAD, tinyobjloader) já estão incluídas no projeto e não necessitam de instalação separada.
+   Detalhes das bibliotecas:
+   - glfw3: Criação de janelas e gestão de inputs
+   - glm: Matemática de vetores e matrizes
+   - freetype: Renderização de fontes de texto
+   - stb: Carregamento de imagens (já incluído no projeto)
 
 ---------------------------
 PASSO 2: COMPILAR O PROJETO
 ---------------------------
 
-O projeto utiliza o CMake para gerar os ficheiros de compilação de uma forma organizada, separando os ficheiros compilados do código-fonte.
+MÉTODO 1: USANDO VISUAL STUDIO (Recomendado)
 
-1.  Abra um terminal e navegue até à pasta principal (raiz) deste projeto. É a pasta que contém este ficheiro e o `CMakeLists.txt`.
+1. Abra o Visual Studio 2022
+2. Selecione "Open a local folder"
+3. Navegue até a pasta do projeto (que contém o CMakeLists.txt)
+4. O Visual Studio detectará automaticamente o CMakeLists.txt
+5. Aguarde a configuração automática (pode demorar alguns minutos)
+6. Selecione "x64-Debug" ou "x64-Release" no dropdown
+7. Pressione F5 ou clique em "Run" para compilar e executar
 
-    Exemplo:
-    cd /caminho/para/o/seu/PROJETO_CG/
+MÉTODO 2: USANDO LINHA DE COMANDO
 
-2.  Crie um diretório de compilação ("build"), entre nele e execute o CMake.
+1. Abra o PowerShell na pasta do projeto
+2. Execute os comandos:
 
-    (Pode copiar e colar este bloco de comandos inteiro no seu terminal)
-    
-    # Apaga a pasta 'build' antiga para garantir uma compilação limpa
-    rm -rf build
+   # Remove pasta build antiga (se existir)
+   if (Test-Path "build") { Remove-Item -Recurse -Force "build" }
 
-    # Cria uma nova pasta 'build' e entra nela
-    mkdir build
-    cd build
+   # Cria nova pasta build
+   mkdir build
+   cd build
 
-    # Executa o CMake para preparar os ficheiros de compilação
-    cmake ..
+   # Configura o CMake com vcpkg
+   cmake .. -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
 
-3.  Agora que o CMake preparou tudo, compile o projeto com o comando `make`.
+   # Compila o projeto
+   cmake --build . --config Debug
 
-    make
-
-    Este processo pode demorar um pouco na primeira vez. Se tudo correr bem, será criado um ficheiro executável chamado "PROJETO_CG" dentro da pasta `build`.
+3. O executável será criado em: build\Debug\PROJETO_CG.exe
 
 -------------------------
 PASSO 3: EXECUTAR O JOGO
 -------------------------
 
-Após a compilação ser concluída com sucesso, certifique-se de que ainda está no diretório `build`.
+MÉTODO 1: PELO VISUAL STUDIO
+- Pressione F5 ou clique em "Run" para compilar e executar automaticamente
 
-Para iniciar o jogo, execute o seguinte comando:
+MÉTODO 2: PELO EXPLORADOR DE ARQUIVOS
+- Navegue até: build\Debug\
+- Execute: PROJETO_CG.exe
 
-./PROJETO_CG
+MÉTODO 3: PELO POWERSHELL
+- Na pasta build, execute:
+  .\Debug\PROJETO_CG.exe
 
 A janela do labirinto deverá abrir, e o jogo estará pronto a ser jogado.
+
+===============================================
+LINUX (Ubuntu/Debian)
+===============================================
+
+---------------------------------
+PASSO 1: INSTALAR AS DEPENDÊNCIAS
+---------------------------------
+
+Abra um terminal (Ctrl+Alt+T) e execute:
+
+sudo apt-get update && sudo apt-get install build-essential cmake libglfw3-dev libglm-dev libfreetype-dev
+
+Detalhes do que está a ser instalado:
+- build-essential: Compilador de C++ (g++) e ferramentas essenciais
+- cmake: Ferramenta de compilação automatizada
+- libglfw3-dev: Biblioteca para janelas e inputs
+- libglm-dev: Biblioteca para matemática de vetores e matrizes
+- libfreetype-dev: Biblioteca para renderização de fontes
+
+---------------------------
+PASSO 2: COMPILAR O PROJETO
+---------------------------
+
+1. Navegue até a pasta do projeto:
+   cd /caminho/para/o/seu/PROJETO_CG/
+
+2. Execute os comandos:
+   
+   # Remove pasta build antiga
+   rm -rf build
+
+   # Cria nova pasta build
+   mkdir build
+   cd build
+
+   # Configura o CMake
+   cmake ..
+
+   # Compila o projeto
+   make
+
+-------------------------
+PASSO 3: EXECUTAR O JOGO
+-------------------------
+
+No diretório build, execute:
+./PROJETO_CG
+
+===============================================
+TROUBLESHOOTING (SOLUÇÃO DE PROBLEMAS)
+===============================================
+
+PROBLEMA: "vcpkg not found" no Windows
+SOLUÇÃO: Certifique-se de que o vcpkg foi instalado em C:\vcpkg e que executou:
+         .\vcpkg integrate install
+
+PROBLEMA: "CMake not found" no Windows
+SOLUÇÃO: Instale o Visual Studio 2022 com "Desktop development with C++" ou
+         baixe o CMake separadamente de https://cmake.org/download/
+
+PROBLEMA: "OpenGL not supported" ou erro de contexto
+SOLUÇÃO: Atualize os drivers da placa gráfica (NVIDIA, AMD, Intel)
+
+PROBLEMA: "DLL not found" no Windows
+SOLUÇÃO: As DLLs necessárias estão na pasta build\Debug\ junto com o executável
+
+PROBLEMA: Compilação falha no Linux
+SOLUÇÃO: Verifique se todas as dependências foram instaladas:
+         sudo apt-get update
+         sudo apt-get install build-essential cmake libglfw3-dev libglm-dev libfreetype-dev
+
+===============================================
+INFORMAÇÕES ADICIONAIS
+===============================================
+
+ARQUITETURA SUPORTADA:
+- Windows: x64 (64-bit)
+- Linux: x64 (64-bit)
+
+BIBLIOTECAS UTILIZADAS:
+- OpenGL 3.3 Core
+- GLFW 3.x (Gerenciamento de janelas)
+- GLM (Matemática de vetores/matrizes)
+- FreeType (Renderização de texto)
+- GLAD (OpenGL Loader)
+- tinyobjloader (Carregamento de modelos OBJ)
+- stb_image (Carregamento de imagens)
+
+REQUISITOS MÍNIMOS:
+- Windows 10 ou superior
+- Linux com kernel 3.x ou superior
+- Placa gráfica com suporte OpenGL 3.3
+- 4GB RAM
+- 100MB espaço em disco
 
 --------------------
 CONTROLES
 --------------------
-- W, A, S, D: Mover a câmara.
-- Mouse: Olhar ao redor.
-- Clique Esquerdo: Interagir com o baú ou portal mais próximo.
-- ESC: Fechar o programa.
+- W, A, S, D: Mover a câmara
+- Mouse: Olhar ao redor
+- Clique Esquerdo: Interagir com baús e portal
+- ESC: Fechar o programa
+
+OBJETIVO DO JOGO:
+- Encontre e abra 3 baús no labirinto
+- Cada baú aberto acende uma luz dourada
+- Após abrir todos os baús, o portal será ativado
+- Use o portal para completar o jogo!

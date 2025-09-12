@@ -1,5 +1,8 @@
 #pragma once
 
+// ============================================================================
+// BIBLIOTECAS NECESSÁRIAS
+// ============================================================================
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -11,35 +14,42 @@
 #include "Shader.h"
 #include "TextRenderer.h"
 
-// Estruturas de Dados da Cena
+// ============================================================================
+// ESTRUTURAS DE DADOS DA CENA
+// ============================================================================
+
+// Representa um objeto 3D na cena
 struct SceneObject {
-    GLuint vao = 0;
-    int vertexCount = 0;
-    glm::mat4 modelMatrix = glm::mat4(1.0f);
-    glm::vec3 boundingBoxMin, boundingBoxMax;
+    GLuint vao = 0;                    // Vertex Array Object
+    int vertexCount = 0;               // Número de vértices
+    glm::mat4 modelMatrix = glm::mat4(1.0f);  // Matriz de transformação
+    glm::vec3 boundingBoxMin, boundingBoxMax; // Bounding box para colisão
 };
 
+// Representa um baú com animação e iluminação
 struct Chest {
-    SceneObject* base = nullptr;
-    SceneObject* lid = nullptr;
-    std::string base_name;
-    bool hasBeenCounted = false;
-    bool isAnimating = false;
-    bool isOpen = false;
-    float lidOffsetY = 0.0f;
-    float targetLidOffsetY = 0.0f;
-    float animationSpeed = 2.0f;
-    glm::vec3 lightColor = glm::vec3(1.0f, 0.85f, 0.4f);
-    float currentLightIntensity = 0.0f;
-    float targetLightIntensity = 0.0f;
-    float lightFadeSpeed = 3.0f;
+    SceneObject* base = nullptr;       // Parte inferior do baú
+    SceneObject* lid = nullptr;        // Tampa do baú
+    std::string base_name;             // Nome do objeto base
+    bool hasBeenCounted = false;       // Se já foi contado para vitória
+    bool isAnimating = false;          // Se está em animação
+    bool isOpen = false;               // Estado de abertura
+    float lidOffsetY = 0.0f;           // Offset atual da tampa
+    float targetLidOffsetY = 0.0f;     // Offset alvo da tampa
+    float animationSpeed = 2.0f;       // Velocidade da animação
+    glm::vec3 lightColor = glm::vec3(1.0f, 0.9f, 0.6f); // Cor dourada da luz
+    float currentLightIntensity = 0.0f; // Intensidade atual da luz
+    float targetLightIntensity = 0.0f;  // Intensidade alvo da luz
+    float lightFadeSpeed = 3.0f;       // Velocidade do fade da luz
 
-    bool toggleOpen();
-    void update(float dt);
-    glm::vec3 getLightWorldPosition() const;
+    bool toggleOpen();                 // Alternar estado de abertura
+    void update(float dt);             // Atualizar animação
+    glm::vec3 getLightWorldPosition() const; // Posição da luz no mundo
 };
 
-// Definição da Classe Principal do Jogo
+// ============================================================================
+// CLASSE PRINCIPAL DO JOGO
+// ============================================================================
 class Game
 {
 public:
@@ -87,6 +97,7 @@ private:
     std::vector<SceneObject*> colliders;
     SceneObject* portalObject = nullptr;
     std::vector<std::unique_ptr<Chest>> chests;
+    
 
     // Funções privadas da classe Game
     void loadScene(const std::string& path);

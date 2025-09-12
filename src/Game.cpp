@@ -5,7 +5,10 @@
 #include <algorithm>
 #include <cctype>
 
-// Implementação das Funções Wrapper
+// ============================================================================
+// IMPLEMENTAÇÃO DAS FUNÇÕES WRAPPER
+// ============================================================================
+// Estas funções servem como ponte entre o GLFW (biblioteca C) e nossa classe C++
 void framebuffer_size_callback_wrapper(GLFWwindow* window, int width, int height) {
     Game* game = static_cast<Game*>(glfwGetWindowUserPointer(window));
     if (game) game->FramebufferSizeCallback(width, height);
@@ -22,10 +25,16 @@ void mouse_button_callback_wrapper(GLFWwindow* window, int button, int action, i
 // Implementação da Classe Game
 Game::Game(unsigned int width, unsigned int height) : Width(width), Height(height), IsRunning(true)
 {
-    glfwInit();
+    if (!glfwInit()) {
+        std::cout << "Falha ao inicializar GLFW" << std::endl;
+        IsRunning = false;
+        return;
+    }
+    
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
     Window = glfwCreateWindow(Width, Height, "Labirinto Interativo", NULL, NULL);
     if (!Window) {
@@ -43,8 +52,28 @@ Game::Game(unsigned int width, unsigned int height) : Width(width), Height(heigh
 
     glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        std::cout << "Falha ao inicializar GLAD" << std::endl;
+    // Tentar carregar GLAD de forma mais segura
+    try {
+        if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+            std::cout << "Falha ao inicializar GLAD" << std::endl;
+            glfwTerminate();
+            IsRunning = false;
+            return;
+        }
+        
+        // Verificar se o OpenGL foi inicializado corretamente
+        const char* version = (const char*)glGetString(GL_VERSION);
+        if (!version) {
+            std::cout << "Falha ao obter versão do OpenGL" << std::endl;
+            glfwTerminate();
+            IsRunning = false;
+            return;
+        }
+        
+        std::cout << "OpenGL Version: " << version << std::endl;
+    } catch (...) {
+        std::cout << "Erro ao inicializar OpenGL" << std::endl;
+        glfwTerminate();
         IsRunning = false;
         return;
     }
@@ -60,29 +89,50 @@ Game::~Game()
     glfwTerminate();
 }
 
+// ============================================================================
+// INICIALIZAÇÃO DO JOGO
+// ============================================================================
 void Game::Init()
 {
+    std::cout << "=== INICIALIZANDO JOGO ===" << std::endl;
+    std::cout << "Configurando OpenGL..." << std::endl;
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    std::cout << "Carregando shaders..." << std::endl;
     SceneShader = new Shader("shaders/shader.vert", "shaders/shader.frag");
     Shader* textShader = new Shader("shaders/text.vert", "shaders/text.frag");
+    
+    std::cout << "Inicializando TextRenderer..." << std::endl;
     Text = new TextRenderer(*textShader, Width, Height);
     Text->Load("fonts/DejaVuSansMono.ttf", 48);
 
-    loadScene("models/lab_com_baús.obj");
+    
+    std::cout << "Carregando cena do labirinto..." << std::endl;
+    loadScene("models/lab.obj");
+    std::cout << "=== INICIALIZAÇÃO CONCLUÍDA ===" << std::endl;
 }
 
+// ============================================================================
+// CARREGAMENTO DA CENA
+// ============================================================================
 void Game::loadScene(const std::string& path)
 {
+    std::cout << "Carregando arquivo: " << path << std::endl;
+    
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> materials;
     std::string warn, err;
+    
+    std::cout << "Processando arquivo OBJ..." << std::endl;
     if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.c_str())) {
+        std::cout << "Erro ao carregar OBJ: " << warn << " " << err << std::endl;
         throw std::runtime_error(warn + err);
     }
+    
+    std::cout << "✓ Arquivo OBJ carregado com sucesso! (" << shapes.size() << " objetos encontrados)" << std::endl;
     for (const auto& shape : shapes) {
         SceneObject obj;
         std::vector<float> vertex_data;
@@ -111,6 +161,7 @@ void Game::loadScene(const std::string& path)
         glEnableVertexAttribArray(1);
         glBindVertexArray(0);
         sceneObjects[shape.name] = obj;
+        std::cout << "Objeto carregado: " << shape.name << std::endl;
     }
 
     std::map<int, std::string> baseNames;
@@ -142,8 +193,12 @@ void Game::loadScene(const std::string& path)
     }
 }
 
+// ============================================================================
+// PROCESSAMENTO DE INPUT
+// ============================================================================
 void Game::ProcessInput(float dt)
 {
+    // Sair do jogo com ESC
     if (glfwGetKey(Window, GLFW_KEY_ESCAPE) == GLFW_PRESS) IsRunning = false;
     float cameraSpeed = 5.0f * dt;
     glm::vec3 moveDir(0.0f);
@@ -170,15 +225,31 @@ bool Game::checkWallCollision(glm::vec3 futurePos)
     return false;
 }
 
+// ============================================================================
+// ATUALIZAÇÃO DO JOGO
+// ============================================================================
 void Game::Update(float dt)
 {
+    // Verificar se a janela deve fechar
     if (glfwWindowShouldClose(Window)) IsRunning = false;
-    for (auto& chest : chests) { chest->update(dt); }
-    if (uiMessageTimer > 0.0f) { uiMessageTimer -= dt; }
+    
+    // Atualizar animações dos baús
+    for (auto& chest : chests) { 
+        chest->update(dt); 
+    }
+    
+    // Atualizar timer da mensagem da UI
+    if (uiMessageTimer > 0.0f) { 
+        uiMessageTimer -= dt; 
+    }
 }
 
+// ============================================================================
+// RENDERIZAÇÃO PRINCIPAL
+// ============================================================================
 void Game::Render()
 {
+    // Limpar buffers de cor e profundidade
     glClearColor(0.05f, 0.05f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
@@ -188,9 +259,11 @@ void Game::Render()
     SceneShader->setMat4("projection", projection);
     SceneShader->setMat4("view", view);
     
-    // Configuração da Iluminação
+    // ===== CONFIGURAÇÃO DE ILUMINAÇÃO =====
     SceneShader->setVec3("viewPos", cameraPos);
-    SceneShader->setVec3("objectColor", glm::vec3(0.6f, 0.5f, 0.4f));
+    SceneShader->setVec3("objectColor", glm::vec3(0.6f, 0.5f, 0.4f)); // Cor base dos objetos
+    
+    // Luz direcional (simula luz solar)
     SceneShader->setVec3("dirLight.direction", glm::vec3(-0.5f, -1.0f, -0.5f));
     SceneShader->setVec3("dirLight.color", glm::vec3(0.8f, 0.8f, 0.8f));
 
@@ -205,21 +278,30 @@ void Game::Render()
         SceneShader->setVec3("chestLight.position", activeLightChest->getLightWorldPosition());
         SceneShader->setVec3("chestLight.color", activeLightChest->lightColor);
         SceneShader->setFloat("chestLight.intensity", activeLightChest->currentLightIntensity);
+        // Parâmetros de atenuação para luz com alcance maior
         SceneShader->setFloat("chestLight.constant", 1.0f);
-        SceneShader->setFloat("chestLight.linear", 0.09f);
-        SceneShader->setFloat("chestLight.quadratic", 0.032f);
+        SceneShader->setFloat("chestLight.linear", 0.05f);
+        SceneShader->setFloat("chestLight.quadratic", 0.01f);
     } else {
         SceneShader->setFloat("chestLight.intensity", 0.0f);
     }
 
+    // ===== RENDERIZAÇÃO DOS OBJETOS DA CENA =====
     for (auto const& [name, object] : sceneObjects) {
         SceneShader->setMat4("model", object.modelMatrix);
+        
+        // Renderização com cores sólidas (sem texturas)
+        SceneShader->setInt("useTexture", 0);
+        
         glBindVertexArray(object.vao);
         glDrawArrays(GL_TRIANGLES, 0, object.vertexCount);
     }
     
+    // ===== INTERFACE DO USUÁRIO =====
     glDisable(GL_DEPTH_TEST);
-    std::string counterText = "Baus abertos: " + std::to_string(chestsOpenedCount) + "/" + std::to_string(CHESTS_TO_WIN);
+    
+    // Contador de baús abertos
+    std::string counterText = "Baús abertos: " + std::to_string(chestsOpenedCount) + "/" + std::to_string(CHESTS_TO_WIN);
     Text->RenderText(counterText, 25.0f, 25.0f, 0.5f, glm::vec3(1.0f, 1.0f, 1.0f));
     if (portalIsActive && !gameWon) {
         if (fmod((float)glfwGetTime(), 1.0f) > 0.5f) {
@@ -320,16 +402,48 @@ bool Chest::toggleOpen()
 
 void Chest::update(float dt)
 {
-    if (!isAnimating) return;
-    if (std::abs(lidOffsetY - targetLidOffsetY) < 0.01f) { lidOffsetY = targetLidOffsetY; isAnimating = false; }
-    else if (lidOffsetY < targetLidOffsetY) { lidOffsetY += animationSpeed * dt; }
-    else { lidOffsetY -= animationSpeed * dt; }
-    lid->modelMatrix = base->modelMatrix;
-    lid->modelMatrix = glm::translate(lid->modelMatrix, glm::vec3(0.0f, lidOffsetY, 0.0f));
+    // Atualizar animação da tampa
+    if (isAnimating) {
+        if (std::abs(lidOffsetY - targetLidOffsetY) < 0.01f) { 
+            lidOffsetY = targetLidOffsetY; 
+            isAnimating = false; 
+        }
+        else if (lidOffsetY < targetLidOffsetY) { 
+            lidOffsetY += animationSpeed * dt; 
+        }
+        else { 
+            lidOffsetY -= animationSpeed * dt; 
+        }
+        lid->modelMatrix = base->modelMatrix;
+        lid->modelMatrix = glm::translate(lid->modelMatrix, glm::vec3(0.0f, lidOffsetY, 0.0f));
+    }
+    
+    // Atualizar intensidade da luz baseada no estado de abertura
+    if (isOpen) {
+        targetLightIntensity = 2.5f; // Luz forte quando aberto
+    } else {
+        targetLightIntensity = 0.0f; // Sem luz quando fechado
+    }
+    
+    // Interpolar intensidade da luz suavemente
+    if (currentLightIntensity < targetLightIntensity) {
+        currentLightIntensity += lightFadeSpeed * dt;
+        if (currentLightIntensity > targetLightIntensity) {
+            currentLightIntensity = targetLightIntensity;
+        }
+    } else if (currentLightIntensity > targetLightIntensity) {
+        currentLightIntensity -= lightFadeSpeed * dt;
+        if (currentLightIntensity < targetLightIntensity) {
+            currentLightIntensity = targetLightIntensity;
+        }
+    }
 }
 
 glm::vec3 Chest::getLightWorldPosition() const
 {
     glm::vec3 chestCenter = (base->boundingBoxMin + base->boundingBoxMax) / 2.0f;
-    return chestCenter + glm::vec3(0.0f, 0.2f, 0.0f);
+    // Posicionar a luz no centro do baú, ligeiramente acima
+    return chestCenter + glm::vec3(0.0f, 0.3f, 0.0f);
 }
+
+
