@@ -2,6 +2,13 @@
 
 Este projeto é um jogo de exploração de um labirinto 3D desenvolvido em C++ com a biblioteca gráfica OpenGL. O objetivo é navegar pelo labirinto, encontrar e abrir 3 baús para ativar um portal e chegar ao final.
 
+Apresentação: https://youtu.be/Hkqo7NpuDEU?si=On3TOO4C6UKQDwv_
+
+Docente: Ícaro Lins Leitão da Cunha
+
+Participantes: Antônio Carlos S. B. Vaz, Cauã de Souza Santos, Lucas Willian Santos.
+
+
 ## Funcionalidades
 
 * **Câmera em Primeira Pessoa:** Movimentação livre pelo cenário com controles padrão (WASD + Mouse).
