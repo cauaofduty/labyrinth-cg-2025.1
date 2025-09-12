@@ -40,11 +40,11 @@ sudo apt-get update && sudo apt-get install build-essential cmake libglfw3-dev l
 
 #### 2. Obter o Código
 
-Clone este repositório:
+Clone este repositório, mas antes, navegue até a pasta que deseja armazená-lo:
 ```bash
-# Substitua o URL pelo URL do seu repositório no GitHub
-git clone [https://github.com/AntonioCVaz/Labirinto-OpenGL.git](https://github.com/AntonioCVaz/Labirinto-OpenGL.git)
-cd Labirinto-OpenGL
+cd ~/pasta-desejada
+git clone https://github.com/cauaofduty/labyrinth-cg-2025.1.git
+
 ```
 
 #### 3. Compilar o Projeto
@@ -92,7 +92,7 @@ mkdir C:\src
 cd C:\src
 
 # Clone o repositório do vcpkg
-git clone [https://github.com/Microsoft/vcpkg.git](https://github.com/Microsoft/vcpkg.git)
+git clone https://github.com/Microsoft/vcpkg.git](https://github.com/Microsoft/vcpkg.git
 
 # Entre na pasta e execute o script de bootstrap
 cd vcpkg
@@ -111,7 +111,8 @@ cd vcpkg
 2.  Navegue para a pasta que deve armazenar o projeto (ex: `cd Documents`).
 3.  Clone o repositório:
     ```bash
-    git clone [https://github.com/AntonioCVaz/Labirinto-OpenGL.git](https://github.com/AntonioCVaz/Labirinto-OpenGL.git)
+     git clone https://github.com/cauaofduty/labyrinth-cg-2025.1.git
+
     ```
 4.  Abra o **Visual Studio 2022**.
 5.  Vá em `File` > `Open` > `CMake...` e selecione o arquivo `CMakeLists.txt` na pasta `Labirinto-OpenGL` que acabou de clonar.
