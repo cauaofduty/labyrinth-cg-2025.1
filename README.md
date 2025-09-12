@@ -4,11 +4,11 @@ Este projeto é um jogo de exploração de um labirinto 3D desenvolvido em C++ c
 
 ## Funcionalidades
 
-* **Câmara em Primeira Pessoa:** Movimentação livre pelo cenário com controlos padrão (WASD + Mouse).
-* **Colisão com o Cenário:** Um sistema de colisão baseado em caixas delimitadoras (AABB) impede que o jogador atravesse paredes e o chão.
-* **Objetos Interativos:** Os baús podem ser abertos através da proximidade e de um clique, ativando uma animação de "levitação" da tampa.
+* **Câmera em Primeira Pessoa:** Movimentação livre pelo cenário com controles padrão (WASD + Mouse).
+* **Colisão com o Cenário:** Um sistema de colisão baseado em bounding boxes (AABB) impede que o jogador atravesse paredes e o chão.
+* **Objetos Interativos:** Os baús podem ser abertos por proximidade e de um clique, ativando uma animação de "levitação" da tampa.
 * **Sistema de Jogo:** O objetivo é abrir 3 baús para ativar um portal. Ao interagir com o portal, o jogo exibe mensagens de estado.
-* **Interface de Utilizador (UI):** O display mostra um contador de baús abertos e mensagens dinâmicas, como o objetivo atual ("Procure o portal!") e a mensagem de vitória ("FIM").
+* **Interface de Usuário (UI):** O display mostra um contador de baús abertos e mensagens dinâmicas, como o objetivo atual ("Procure o portal!") e a mensagem de vitória ("FIM").
 
 ## Tecnologias Utilizadas
 
@@ -19,15 +19,15 @@ Este projeto é um jogo de exploração de um labirinto 3D desenvolvido em C++ c
     * **GLAD:** Para carregar as funções do OpenGL.
     * **GLM:** Para matemática de vetores e matrizes.
     * **tinyobjloader:** Para carregar modelos 3D no formato `.obj`.
-    * **Freetype:** Para renderização de texto e da UI no ecrã.
-* **Modelação 3D:** Blender
+    * **Freetype:** Para renderização de texto e da UI na tela.
+* **Modelagem 3D:** Blender
 * **Sistema de Compilação:** CMake
 
 ---
 
 ## Como Compilar e Executar
 
-As instruções variam dependendo do sistema operativo.
+As instruções variam dependendo do sistema operacional.
 
 ### 🐧 Instruções para Linux (Debian/Ubuntu)
 
@@ -40,7 +40,7 @@ sudo apt-get update && sudo apt-get install build-essential cmake libglfw3-dev l
 
 #### 2. Obter o Código
 
-Clone este repositório para o seu computador:
+Clone este repositório:
 ```bash
 # Substitua o URL pelo URL do seu repositório no GitHub
 git clone [https://github.com/AntonioCVaz/Labirinto-OpenGL.git](https://github.com/AntonioCVaz/Labirinto-OpenGL.git)
@@ -76,59 +76,58 @@ No Windows, o processo é mais fácil usando o **Visual Studio** e o gestor de p
 
 #### 1. Instalar Ferramentas
 
-* **Visual Studio 2022:** Instale a partir do [site oficial](https://visualstudio.microsoft.com/pt-br/vs/). Durante a instalação, certifique-se de que marca a carga de trabalho **"Desenvolvimento de desktop com C++"**.
+* **Visual Studio 2022:** Instale a partir do [site oficial](https://visualstudio.microsoft.com/pt-br/vs/). Durante a instalação, certifique-se de que seleciona o workload **"Desenvolvimento de desktop com C++"**.
 * **Git for Windows:** Instale a partir do [site oficial](https://git-scm.com/download/win).
-* **CMake:** Instale a partir do [site oficial](https://cmake.org/download/). Certifique-se de que, durante a instalação, escolhe a opção para adicionar o CMake ao PATH do sistema para todos os utilizadores.
+* **CMake:** Instale a partir do [site oficial](https://cmake.org/download/). Certifique-se de que, durante a instalação, escolha a opção para adicionar o CMake ao PATH do sistema para todos os usuários.
 
 #### 2. Instalar Dependências com vcpkg
 
-O `vcpkg` irá descarregar e compilar as bibliotecas necessárias para nós.
+O `vcpkg` irá baixar e compilar as bibliotecas necessárias para nós.
 
 Abra um terminal **PowerShell como Administrador** e execute os seguintes comandos, um de cada vez:
 
 ```powershell
-# Navega para um diretório onde queira instalar o vcpkg (ex: C:\src)
+# Navegue para a pasta qual queira instalar o vcpkg (ex: C:\src)
 mkdir C:\src
 cd C:\src
 
-# Clona o repositório do vcpkg
+# Clone o repositório do vcpkg
 git clone [https://github.com/Microsoft/vcpkg.git](https://github.com/Microsoft/vcpkg.git)
 
-# Entra na pasta e executa o script de bootstrap
+# Entre na pasta e execute o script de bootstrap
 cd vcpkg
 .\bootstrap-vcpkg.bat
 
-# Integra o vcpkg com o Visual Studio (passo importante!)
+# Integre o vcpkg com o Visual Studio (passo importante!)
 .\vcpkg integrate install
 
-# Instala as bibliotecas que o nosso projeto precisa
+# Instale as bibliotecas que o projeto precisa
 .\vcpkg install glfw3 glm freetype
 ```
 
 #### 3. Obter e Compilar o Projeto
 
 1.  Abra o **Git Bash** (que foi instalado com o Git for Windows).
-2.  Navegue para a pasta onde quer guardar o projeto (ex: `cd Documents`).
+2.  Navegue para a pasta que deve armazenar o projeto (ex: `cd Documents`).
 3.  Clone o repositório:
     ```bash
-    # Substitua o URL pelo URL do seu repositório no GitHub
     git clone [https://github.com/AntonioCVaz/Labirinto-OpenGL.git](https://github.com/AntonioCVaz/Labirinto-OpenGL.git)
     ```
 4.  Abra o **Visual Studio 2022**.
-5.  Vá a `File` > `Open` > `CMake...` e selecione o ficheiro `CMakeLists.txt` na pasta `Labirinto-OpenGL` que acabou de clonar.
-6.  O Visual Studio irá detetar automaticamente as bibliotecas instaladas pelo `vcpkg` e configurar o projeto.
-7.  No menu superior, vá a `Build` > `Build All`.
+5.  Vá em `File` > `Open` > `CMake...` e selecione o arquivo `CMakeLists.txt` na pasta `Labirinto-OpenGL` que acabou de clonar.
+6.  O Visual Studio irá detectar automaticamente as bibliotecas instaladas pelo `vcpkg` e configurar o projeto.
+7.  No menu superior, vá em `Build` > `Build All`.
 
 #### 4. Executar
 
 Após a compilação, pode executar o projeto diretamente a partir do Visual Studio:
-* Vá ao menu superior e clique em `Debug` > `Start Without Debugging` (ou prima `Ctrl+F5`).
+* Vá ao menu superior e clique em `Debug` > `Start Without Debugging` (ou pelas teclas `Ctrl+F5`).
 
 ---
 
 ## Controles
 
-* **W, A, S, D**: Mover a câmara.
+* **W, A, S, D**: Mover a câmera.
 * **Mouse**: Olhar ao redor.
 * **Clique Esquerdo**: Interagir com o baú ou portal mais próximo.
 * **ESC**: Fechar o programa.
